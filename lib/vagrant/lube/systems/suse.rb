@@ -20,14 +20,12 @@ module Vagrant
         end
       end
 
-      def change_host_name(name)
-        vm.ssh.execute do |ssh|
-          # Only do this if the hostname is not already set
-          if !ssh.test?("sudo hostname | grep '#{name}'")
-            ssh.exec!("sudo sed -i 's/^.*$/#{name}/' /etc/HOSTNAME")
-            ssh.exec!("sudo hostname #{name}")
-            ssh.exec!("sudo sed -i 's@^\\(127[.]0[.]0[.]1[[:space:]]\\+\\)@\\1#{name} #{name.split('.')[0]} @' /etc/hosts")
-          end
+      def change_host_name name
+        # Only do this if the hostname is not already set
+        if !vm.channel.test("sudo hostname | grep '#{name}'")
+          vm.channel.sudo("sed -i 's/\\(linux\\).*/\\1#{name}/' /etc/HOSTNAME")
+          vm.channel.sudo("hostname #{name}")
+          vm.channel.sudo("sed -i 's@^\\(127[.]0[.]0[.]1[[:space:]]\\+\\)@\\1#{name} #{name.split('.')[0]} @' /etc/hosts")
         end
       end
     end

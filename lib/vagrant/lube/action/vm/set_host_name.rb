@@ -4,11 +4,11 @@ module Vagrant
     module Action
       module VM
         class SetHostName
-          def initialize(app, env)
+          def initialize app, env
             @app = app
           end
 
-          def call(env)
+          def call env
             if env[:vm].config.vm.host_name.nil?
               host = File.basename(env[:vm].env.root_path).gsub(/_/, '-')
               env[:vm].config.vm.host_name = "#{host}.vagrantup.com"
